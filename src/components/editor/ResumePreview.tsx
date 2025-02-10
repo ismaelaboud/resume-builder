@@ -144,9 +144,9 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
   };
 
   return (
-    <div className="w-full h-full bg-gray-100 p-4">
+    <div className="w-full h-full bg-gray-100 p-2 sm:p-4">
       <Card className="w-full h-full bg-white shadow-lg">
-        <ScrollArea className="h-full p-6">
+        <ScrollArea className="h-full p-3 sm:p-6">
           <div
             className="max-w-[21cm] mx-auto"
             style={{ backgroundColor: colorScheme.background }}

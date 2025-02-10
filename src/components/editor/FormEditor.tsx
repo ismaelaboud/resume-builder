@@ -33,14 +33,22 @@ const FormEditor = ({
 }: FormEditorProps) => {
   return (
     <div className="h-full w-full bg-background p-6 flex flex-col gap-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h2 className="text-2xl font-bold">Resume Sections</h2>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => onAddSection("experience")}>
+        <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-2">
+          <Button
+            variant="outline"
+            className="w-full sm:w-auto"
+            onClick={() => onAddSection("experience")}
+          >
             <Plus className="w-4 h-4 mr-2" />
             Add Experience
           </Button>
-          <Button variant="outline" onClick={() => onAddSection("education")}>
+          <Button
+            variant="outline"
+            className="w-full sm:w-auto"
+            onClick={() => onAddSection("education")}
+          >
             <Plus className="w-4 h-4 mr-2" />
             Add Education
           </Button>

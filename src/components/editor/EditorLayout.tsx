@@ -76,22 +76,16 @@ const EditorLayout = ({
 
   return (
     <div className="h-full w-full bg-background">
-      <ResizablePanelGroup
-        direction="horizontal"
-        className="h-full w-full rounded-lg border"
-      >
-        <ResizablePanel defaultSize={50} minSize={30}>
+      <div className="lg:hidden flex flex-col h-full">
+        <div className="flex-1 overflow-auto">
           <FormEditor
             sections={sections}
             onAddSection={handleAddSection}
             onReorderSections={handleReorderSections}
             onDeleteSection={handleDeleteSection}
           />
-        </ResizablePanel>
-
-        <ResizableHandle />
-
-        <ResizablePanel defaultSize={50} minSize={30}>
+        </div>
+        <div className="h-[50vh] border-t">
           <ResumePreview
             sections={sections}
             template="default"
@@ -101,8 +95,38 @@ const EditorLayout = ({
               background: "#ffffff",
             }}
           />
-        </ResizablePanel>
-      </ResizablePanelGroup>
+        </div>
+      </div>
+
+      <div className="hidden lg:block h-full">
+        <ResizablePanelGroup
+          direction="horizontal"
+          className="h-full w-full rounded-lg border"
+        >
+          <ResizablePanel defaultSize={50} minSize={30}>
+            <FormEditor
+              sections={sections}
+              onAddSection={handleAddSection}
+              onReorderSections={handleReorderSections}
+              onDeleteSection={handleDeleteSection}
+            />
+          </ResizablePanel>
+
+          <ResizableHandle />
+
+          <ResizablePanel defaultSize={50} minSize={30}>
+            <ResumePreview
+              sections={sections}
+              template="default"
+              colorScheme={{
+                primary: "#1a1a1a",
+                secondary: "#4a4a4a",
+                background: "#ffffff",
+              }}
+            />
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </div>
     </div>
   );
 };

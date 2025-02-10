@@ -89,18 +89,19 @@ const Home = () => {
   };
 
   return (
-    <div className="h-screen w-full bg-background flex flex-col">
-      <header className="border-b p-4 flex items-center justify-between">
+    <div className="min-h-screen w-full bg-background flex flex-col">
+      <header className="border-b p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 className="text-2xl font-bold">Resume Builder</h1>
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-2">
           <Button
             variant="outline"
+            className="w-full sm:w-auto"
             onClick={() => setShowCustomizer(!showCustomizer)}
           >
             <Palette className="w-4 h-4 mr-2" />
             Customize
           </Button>
-          <Button onClick={handleExport}>
+          <Button className="w-full sm:w-auto" onClick={handleExport}>
             <Download className="w-4 h-4 mr-2" />
             Export PDF
           </Button>
