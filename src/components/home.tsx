@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import html2pdf from "html2pdf.js";
 import EditorLayout from "./editor/EditorLayout";
 import TemplateCustomizer from "./editor/TemplateCustomizer";
 import ExportDialog from "./editor/ExportDialog";
@@ -72,36 +73,19 @@ const Home = () => {
     background: "#ffffff",
   });
 
-  const handleExport = (format: string, options: any) => {
-    const resumeContent =
-      document.querySelector(".max-w-\\[21cm\\]")?.innerHTML;
-    if (!resumeContent) return;
+  const handleExport = () => {
+    const resumeElement = document.querySelector(".resume-preview"); // Ensure this is the correct selector for the right panel
+    if (!resumeElement) return;
 
-    const htmlContent = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>${sections.find((s) => s.type === "personal")?.content?.name || "Resume"}</title>
-          <style>
-            body { margin: 0; padding: 20px; font-family: system-ui, -apple-system, sans-serif; }
-            .resume { max-width: 21cm; margin: 0 auto; }
-          </style>
-        </head>
-        <body>
-          <div class="resume">${resumeContent}</div>
-        </body>
-      </html>
-    `;
+    const options = {
+      margin: 10,
+      filename: "resume.pdf",
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { format: "a4", orientation: "portrait" },
+    };
 
-    const blob = new Blob([htmlContent], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${options.filename}.${format}`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    html2pdf().set(options).from(resumeElement).save();
   };
 
   return (
@@ -116,9 +100,9 @@ const Home = () => {
             <Palette className="w-4 h-4 mr-2" />
             Customize
           </Button>
-          <Button onClick={() => setShowExportDialog(true)}>
+          <Button onClick={handleExport}>
             <Download className="w-4 h-4 mr-2" />
-            Export
+            Export PDF
           </Button>
         </div>
       </header>
@@ -136,6 +120,30 @@ const Home = () => {
             />
           </div>
         )}
+
+        <div className="resume-preview bg-white p-6 rounded shadow-lg max-w-[21cm] mx-auto">
+          {/* Resume content (right panel) goes here */}
+          <h2 className="text-3xl font-bold">{sections[0]?.content?.name}</h2>
+          <p>
+            {sections[0]?.content?.email} | {sections[0]?.content?.phone}
+          </p>
+
+          <h3 className="text-xl font-semibold mt-4">Work Experience</h3>
+          <p className="font-bold">{sections[1]?.content?.company}</p>
+          <p>
+            {sections[1]?.content?.position} ({sections[1]?.content?.duration})
+          </p>
+          <p>{sections[1]?.content?.description}</p>
+
+          <h3 className="text-xl font-semibold mt-4">Education</h3>
+          <p className="font-bold">{sections[2]?.content?.school}</p>
+          <p>
+            {sections[2]?.content?.degree} ({sections[2]?.content?.year})
+          </p>
+
+          <h3 className="text-xl font-semibold mt-4">Skills</h3>
+          <p>{sections[3]?.content?.skills.join(", ")}</p>
+        </div>
 
         <ExportDialog
           open={showExportDialog}
