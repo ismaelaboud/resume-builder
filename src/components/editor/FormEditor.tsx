@@ -86,6 +86,29 @@ const FormEditor = ({
                 <Separator className="my-4" />
 
                 <div className="space-y-4">
+                  {section.type === "summary" && (
+                    <div className="space-y-2">
+                      <textarea
+                        placeholder="Write a brief summary of your professional background and goals..."
+                        className="w-full p-2 border rounded min-h-[100px]"
+                        value={section.content?.summary || ""}
+                        onChange={(e) => {
+                          const updatedContent = {
+                            ...section.content,
+                            summary: e.target.value,
+                          };
+                          onReorderSections(
+                            sections.map((s) =>
+                              s.id === section.id
+                                ? { ...s, content: updatedContent }
+                                : s,
+                            ),
+                          );
+                        }}
+                      />
+                    </div>
+                  )}
+
                   {section.type === "personal" && (
                     <div className="space-y-2">
                       <input
