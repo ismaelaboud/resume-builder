@@ -14,47 +14,42 @@ interface Section {
   content: any;
 }
 
+interface ColorScheme {
+  primary: string;
+  secondary: string;
+  background: string;
+}
+
+interface FontSettings {
+  family: string;
+  nameSize: string;
+  sectionSize: string;
+  bodySize: string;
+}
+
 interface EditorLayoutProps {
   sections?: Section[];
   onSectionsChange?: (sections: Section[]) => void;
+  colorScheme?: ColorScheme;
+  fontSettings?: FontSettings;
+  template?: string;
 }
 
-const defaultSections: Section[] = [
-  {
-    id: "1",
-    type: "experience",
-    title: "Work Experience",
-    content: {
-      company: "Example Corp",
-      position: "Software Engineer",
-      duration: "2020 - Present",
-      description:
-        "Led development of key features and maintained core systems",
-    },
-  },
-  {
-    id: "2",
-    type: "education",
-    title: "Education",
-    content: {
-      school: "University of Technology",
-      degree: "Bachelor of Science in Computer Science",
-      year: "2016 - 2020",
-    },
-  },
-  {
-    id: "3",
-    type: "skills",
-    title: "Skills",
-    content: {
-      skills: ["React", "TypeScript", "Node.js", "Python"],
-    },
-  },
-];
-
 const EditorLayout = ({
-  sections = defaultSections,
+  sections = [],
   onSectionsChange = () => {},
+  colorScheme = {
+    primary: "#1a1a1a",
+    secondary: "#4a4a4a",
+    background: "#ffffff",
+  },
+  fontSettings = {
+    family: "Arial, sans-serif",
+    nameSize: "2xl",
+    sectionSize: "lg",
+    bodySize: "base",
+  },
+  template = "professional",
 }: EditorLayoutProps) => {
   const handleAddSection = (type: Section["type"]) => {
     const newSection: Section = {
@@ -88,12 +83,9 @@ const EditorLayout = ({
         <div className="h-[50vh] border-t">
           <ResumePreview
             sections={sections}
-            template="default"
-            colorScheme={{
-              primary: "#1a1a1a",
-              secondary: "#4a4a4a",
-              background: "#ffffff",
-            }}
+            template={template}
+            colorScheme={colorScheme}
+            fontSettings={fontSettings}
           />
         </div>
       </div>
@@ -117,12 +109,9 @@ const EditorLayout = ({
           <ResizablePanel defaultSize={50} minSize={30}>
             <ResumePreview
               sections={sections}
-              template="default"
-              colorScheme={{
-                primary: "#1a1a1a",
-                secondary: "#4a4a4a",
-                background: "#ffffff",
-              }}
+              template={template}
+              colorScheme={colorScheme}
+              fontSettings={fontSettings}
             />
           </ResizablePanel>
         </ResizablePanelGroup>

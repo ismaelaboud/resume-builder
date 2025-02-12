@@ -3,6 +3,18 @@ import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getTemplate } from "./templates";
 
+const getFontSize = (size: string): string => {
+  const sizes = {
+    sm: "0.875rem",
+    base: "1rem",
+    lg: "1.125rem",
+    xl: "1.25rem",
+    "2xl": "1.5rem",
+    "3xl": "1.875rem",
+  };
+  return sizes[size] || "1rem";
+};
+
 interface ResumeSection {
   id: string;
   type: "personal" | "summary" | "experience" | "education" | "skills";
@@ -17,6 +29,12 @@ interface ResumePreviewProps {
     secondary: string;
     background: string;
   };
+  fontSettings?: {
+    family: string;
+    nameSize: string;
+    sectionSize: string;
+    bodySize: string;
+  };
 }
 
 const ResumePreview: React.FC<ResumePreviewProps> = ({
@@ -26,6 +44,12 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
     primary: "#1a1a1a",
     secondary: "#4a4a4a",
     background: "#ffffff",
+  },
+  fontSettings = {
+    family: "Arial, sans-serif",
+    nameSize: "2xl",
+    sectionSize: "lg",
+    bodySize: "base",
   },
 }) => {
   const templateData = getTemplate(template);
@@ -42,7 +66,10 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
         <ScrollArea className="h-full">
           <div
             className="max-w-[21cm] mx-auto p-8"
-            style={{ backgroundColor: colorScheme.background }}
+            style={{
+              backgroundColor: colorScheme.background,
+              fontFamily: fontSettings.family,
+            }}
           >
             {/* Header */}
             <div
@@ -60,6 +87,7 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
                     template === "modern"
                       ? colorScheme.background
                       : colorScheme.primary,
+                  fontSize: getFontSize(fontSettings.nameSize),
                 }}
               >
                 {personalInfo.name || "Your Name"}
@@ -71,6 +99,7 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
                     template === "modern"
                       ? `${colorScheme.background}CC`
                       : colorScheme.secondary,
+                  fontSize: getFontSize(fontSettings.bodySize),
                 }}
               >
                 {[personalInfo.email, personalInfo.phone, personalInfo.location]
@@ -84,13 +113,21 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
               <div className={templateData.layout.sections.style}>
                 <h2
                   className={templateData.layout.sections.titleStyle}
-                  style={{ color: colorScheme.primary }}
+                  style={{
+                    color: colorScheme.primary,
+                    fontSize: getFontSize(fontSettings.sectionSize),
+                  }}
                 >
                   {template === "minimal"
                     ? "PROFESSIONAL SUMMARY"
                     : "Professional Summary"}
                 </h2>
-                <p className="text-sm" style={{ color: colorScheme.secondary }}>
+                <p
+                  style={{
+                    color: colorScheme.secondary,
+                    fontSize: getFontSize(fontSettings.bodySize),
+                  }}
+                >
                   {summarySection.content.summary}
                 </p>
               </div>
@@ -101,7 +138,10 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
               <div className={templateData.layout.sections.style}>
                 <h2
                   className={templateData.layout.sections.titleStyle}
-                  style={{ color: colorScheme.primary }}
+                  style={{
+                    color: colorScheme.primary,
+                    fontSize: getFontSize(fontSettings.sectionSize),
+                  }}
                 >
                   {template === "minimal" ? "EXPERIENCE" : "Experience"}
                 </h2>
@@ -110,22 +150,35 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
                     <div key={section.id}>
                       <div
                         className="font-medium"
-                        style={{ color: colorScheme.primary }}
+                        style={{
+                          color: colorScheme.primary,
+                          fontSize: getFontSize(fontSettings.bodySize),
+                        }}
                       >
                         {section.content.position}
                       </div>
                       <div
-                        className="text-sm"
-                        style={{ color: colorScheme.secondary }}
+                        style={{
+                          color: colorScheme.secondary,
+                          fontSize: getFontSize(fontSettings.bodySize),
+                        }}
                       >
                         {section.content.company}
                       </div>
-                      <div className="text-sm text-gray-600">
+                      <div
+                        style={{
+                          color: "#666",
+                          fontSize: getFontSize(fontSettings.bodySize),
+                        }}
+                      >
                         {section.content.duration}
                       </div>
                       <p
-                        className="text-sm mt-1"
-                        style={{ color: colorScheme.secondary }}
+                        className="mt-1"
+                        style={{
+                          color: colorScheme.secondary,
+                          fontSize: getFontSize(fontSettings.bodySize),
+                        }}
                       >
                         {section.content.description}
                       </p>
@@ -140,7 +193,10 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
               <div className={templateData.layout.sections.style}>
                 <h2
                   className={templateData.layout.sections.titleStyle}
-                  style={{ color: colorScheme.primary }}
+                  style={{
+                    color: colorScheme.primary,
+                    fontSize: getFontSize(fontSettings.sectionSize),
+                  }}
                 >
                   {template === "minimal" ? "EDUCATION" : "Education"}
                 </h2>
@@ -149,17 +205,27 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
                     <div key={section.id}>
                       <div
                         className="font-medium"
-                        style={{ color: colorScheme.primary }}
+                        style={{
+                          color: colorScheme.primary,
+                          fontSize: getFontSize(fontSettings.bodySize),
+                        }}
                       >
                         {section.content.degree}
                       </div>
                       <div
-                        className="text-sm"
-                        style={{ color: colorScheme.secondary }}
+                        style={{
+                          color: colorScheme.secondary,
+                          fontSize: getFontSize(fontSettings.bodySize),
+                        }}
                       >
                         {section.content.school}
                       </div>
-                      <div className="text-sm text-gray-600">
+                      <div
+                        style={{
+                          color: "#666",
+                          fontSize: getFontSize(fontSettings.bodySize),
+                        }}
+                      >
                         {section.content.year}
                       </div>
                     </div>
@@ -173,7 +239,10 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
               <div className={templateData.layout.sections.style}>
                 <h2
                   className={templateData.layout.sections.titleStyle}
-                  style={{ color: colorScheme.primary }}
+                  style={{
+                    color: colorScheme.primary,
+                    fontSize: getFontSize(fontSettings.sectionSize),
+                  }}
                 >
                   {template === "minimal" ? "SKILLS" : "Skills"}
                 </h2>
@@ -188,14 +257,17 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
                             ? {
                                 backgroundColor: colorScheme.primary,
                                 color: colorScheme.background,
+                                fontSize: getFontSize(fontSettings.bodySize),
                               }
                             : template === "minimal"
                               ? {
                                   color: colorScheme.secondary,
+                                  fontSize: getFontSize(fontSettings.bodySize),
                                 }
                               : {
                                   backgroundColor: `${colorScheme.primary}10`,
                                   color: colorScheme.primary,
+                                  fontSize: getFontSize(fontSettings.bodySize),
                                 }
                         }
                       >

@@ -1,6 +1,12 @@
 export interface Template {
   id: string;
   name: string;
+  fontFamily?: string;
+  fontSize?: {
+    name: string;
+    section: string;
+    body: string;
+  };
   layout: {
     header: {
       style: string;

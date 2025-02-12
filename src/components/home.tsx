@@ -23,6 +23,13 @@ interface ColorScheme {
   background: string;
 }
 
+interface FontSettings {
+  family: string;
+  nameSize: string;
+  sectionSize: string;
+  bodySize: string;
+}
+
 const createSectionsFromTemplate = (template) => {
   const contactParts = template.preview.contact.split(" | ");
   const sections = [
@@ -96,6 +103,14 @@ const Home = () => {
   const [selectedTemplate, setSelectedTemplate] = useState(
     templateId || "professional",
   );
+
+  const [fontSettings, setFontSettings] = useState<FontSettings>({
+    family: "inter",
+    nameSize: "2xl",
+    sectionSize: "lg",
+    bodySize: "base",
+  });
+
   const [colorScheme, setColorScheme] = useState<ColorScheme>({
     primary: "#1a1a1a",
     secondary: "#4a4a4a",
@@ -134,19 +149,26 @@ const Home = () => {
       </header>
 
       <main className="flex-1 relative">
-        <EditorLayout sections={sections} onSectionsChange={setSections} />
+        <EditorLayout
+          sections={sections}
+          onSectionsChange={setSections}
+          colorScheme={colorScheme}
+          fontSettings={fontSettings}
+        />
 
         {showCustomizer && (
           <div className="absolute right-4 top-4 z-10">
             <TemplateCustomizer
               selectedTemplate={selectedTemplate}
               colorScheme={colorScheme}
+              fontSettings={fontSettings}
               onTemplateChange={(templateId) => {
                 const template = getTemplate(templateId);
                 setSelectedTemplate(templateId);
                 setSections(createSectionsFromTemplate(template));
               }}
               onColorSchemeChange={setColorScheme}
+              onFontSettingsChange={setFontSettings}
             />
           </div>
         )}
