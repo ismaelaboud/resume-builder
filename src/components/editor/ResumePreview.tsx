@@ -61,11 +61,11 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
   const skillsSection = sections.find((s) => s.type === "skills");
 
   return (
-    <div className="w-full h-full bg-gray-100 p-2 sm:p-4">
+    <div className="w-full h-full bg-gray-100 p-2 sm:p-4 flex items-center justify-center">
       <Card className="w-full h-full bg-white shadow-lg resume-preview">
         <ScrollArea className="h-full">
           <div
-            className="max-w-[21cm] mx-auto p-8"
+            className="w-[21cm] h-[29.7cm] mx-auto p-8 relative"
             style={{
               backgroundColor: colorScheme.background,
               fontFamily: fontSettings.family,

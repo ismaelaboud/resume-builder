@@ -168,6 +168,25 @@ const FormEditor = ({
                           );
                         }}
                       />
+                      <input
+                        type="text"
+                        placeholder="Location (e.g. New York, NY)"
+                        className="w-full p-2 border rounded"
+                        value={section.content?.location || ""}
+                        onChange={(e) => {
+                          const updatedContent = {
+                            ...section.content,
+                            location: e.target.value,
+                          };
+                          onReorderSections(
+                            sections.map((s) =>
+                              s.id === section.id
+                                ? { ...s, content: updatedContent }
+                                : s,
+                            ),
+                          );
+                        }}
+                      />
                     </div>
                   )}
                   {section.type === "experience" && (
