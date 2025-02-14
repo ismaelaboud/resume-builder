@@ -1,10 +1,21 @@
 import React, { useState, useEffect } from "react";
+import { getCurrentUser, saveResume } from "@/lib/auth";
+import AuthDialog from "./auth/AuthDialog";
 import html2pdf from "html2pdf.js";
 import EditorLayout from "./editor/EditorLayout";
 import TemplateCustomizer from "./editor/TemplateCustomizer";
 import ExportDialog from "./editor/ExportDialog";
+import ResumeUploader from "./resume/ResumeUploader";
+import ATSScoreDialog from "./resume/ATSScoreDialog";
 import { Button } from "@/components/ui/button";
-import { Download, Palette } from "lucide-react";
+import { Download, Palette, FileText } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useSearchParams } from "react-router-dom";
 import { getTemplate } from "./editor/templates";
 import Navbar from "./layout/Navbar";
@@ -100,6 +111,19 @@ const Home = () => {
   const [sections, setSections] = useState<Section[]>([]);
   const [showCustomizer, setShowCustomizer] = useState(false);
   const [showExportDialog, setShowExportDialog] = useState(false);
+  const [showATSDialog, setShowATSDialog] = useState(false);
+  const [showATSScoreDialog, setShowATSScoreDialog] = useState(false);
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
+  const [atsScore, setAtsScore] = useState(0);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const user = await getCurrentUser();
+      setUser(user);
+    };
+    checkUser();
+  }, []);
   const [selectedTemplate, setSelectedTemplate] = useState(
     templateId || "professional",
   );
@@ -141,14 +165,31 @@ const Home = () => {
             <Palette className="w-4 h-4 mr-2" />
             Customize
           </Button>
-          <Button className="w-full sm:w-auto" onClick={handleExport}>
-            <Download className="w-4 h-4 mr-2" />
-            Export PDF
-          </Button>
+          <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-2">
+            <Button className="w-full sm:w-auto" onClick={handleExport}>
+              <Download className="w-4 h-4 mr-2" />
+              Export PDF
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full sm:w-auto"
+              onClick={async () => {
+                const user = await getCurrentUser();
+                if (!user) {
+                  setShowAuthDialog(true);
+                } else {
+                  setShowATSDialog(true);
+                }
+              }}
+            >
+              <FileText className="w-4 h-4 mr-2" />
+              Upload Resume
+            </Button>
+          </div>
         </div>
       </header>
 
-      <main className="flex-1 relative">
+      <main className="flex-1 relative overflow-visible">
         <EditorLayout
           sections={sections}
           onSectionsChange={setSections}
@@ -172,6 +213,80 @@ const Home = () => {
             />
           </div>
         )}
+
+        {/* Resume Upload Dialog */}
+        <Dialog open={showATSDialog} onOpenChange={setShowATSDialog}>
+          <DialogContent className="sm:max-w-[600px] z-50">
+            <DialogHeader>
+              <DialogTitle>Upload Your Resume</DialogTitle>
+              <DialogDescription>
+                Get an ATS compatibility score for your existing resume
+              </DialogDescription>
+            </DialogHeader>
+            <ResumeUploader
+              onUpload={async (text) => {
+                try {
+                  // For now using mock score - in production would call AI API
+                  const mockScore = Math.floor(Math.random() * 40) + 60;
+                  const mockAnalysis = [
+                    {
+                      category: "Keywords",
+                      score: 85,
+                      suggestions: ["Good use of keywords", "Add more skills"],
+                    },
+                    {
+                      category: "Format",
+                      score: mockScore,
+                      suggestions: ["Clean format"],
+                    },
+                  ];
+
+                  await saveResume(text, mockScore, mockAnalysis);
+                  setAtsScore(mockScore);
+                  setShowATSDialog(false);
+                  setShowATSScoreDialog(true);
+                } catch (error) {
+                  console.error("Error saving resume:", error);
+                  // Would show error toast here
+                }
+              }}
+            />
+          </DialogContent>
+        </Dialog>
+
+        {/* ATS Score Dialog */}
+        <ATSScoreDialog
+          open={showATSScoreDialog}
+          onOpenChange={setShowATSScoreDialog}
+          score={atsScore}
+          analysis={[
+            {
+              category: "Keywords",
+              score: 85,
+              suggestions: [
+                "Good use of industry-specific keywords",
+                "Consider adding more technical skills",
+              ],
+            },
+            {
+              category: "Format",
+              score: 90,
+              suggestions: ["Clean and well-structured format"],
+            },
+            {
+              category: "Content",
+              score: 75,
+              suggestions: [
+                "Quantify more achievements",
+                "Add more action verbs",
+                "Include specific metrics",
+              ],
+            },
+          ]}
+        />
+
+        {/* Auth Dialog */}
+        <AuthDialog open={showAuthDialog} onOpenChange={setShowAuthDialog} />
 
         <ExportDialog
           open={showExportDialog}
