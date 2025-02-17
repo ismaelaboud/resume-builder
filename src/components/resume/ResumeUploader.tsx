@@ -13,6 +13,43 @@ const ResumeUploader = ({ onUpload = () => {} }: ResumeUploaderProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const analyzeResume = async (text: string) => {
+    // This is a mock analysis - in production this would call an AI API
+    const mockAnalysis = {
+      score: Math.floor(Math.random() * 40) + 60,
+      analysis: [
+        {
+          category: "Keywords",
+          score: 85,
+          suggestions: [
+            "Good use of industry-specific keywords",
+            "Consider adding more technical skills",
+            "Include more action verbs",
+          ],
+        },
+        {
+          category: "Format",
+          score: 90,
+          suggestions: [
+            "Clean and well-structured format",
+            "Good use of bullet points",
+          ],
+        },
+        {
+          category: "Content",
+          score: 75,
+          suggestions: [
+            "Quantify more achievements",
+            "Add specific metrics and results",
+            "Include more accomplishments",
+          ],
+        },
+      ],
+    };
+
+    return mockAnalysis;
+  };
+
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -45,14 +82,43 @@ const ResumeUploader = ({ onUpload = () => {} }: ResumeUploaderProps) => {
     setError(null);
 
     try {
-      // For testing, we'll just use a simple text extraction
-      // In production, you'd want to use proper PDF/DOCX parsing
-      const text = await file.text();
-      onUpload(text);
+      const reader = new FileReader();
+
+      reader.onload = async (e) => {
+        try {
+          // Convert ArrayBuffer to string, handling Unicode properly
+          const text = new TextDecoder("utf-8").decode(
+            e.target?.result as ArrayBuffer,
+          );
+
+          // Clean the text by removing null characters and other problematic Unicode
+          const cleanedText = text
+            .replace(/\u0000/g, "") // Remove null characters
+            .replace(/[^\x20-\x7E\x0A\x0D]/g, " ") // Replace non-printable chars with space
+            .replace(/\s+/g, " ") // Replace multiple spaces with single space
+            .trim();
+
+          const analysis = await analyzeResume(cleanedText);
+          // Ensure text is properly encoded and not too long
+          const truncatedText = cleanedText.slice(0, 10000); // Limit to first 10000 chars
+          onUpload(truncatedText);
+        } catch (err) {
+          console.error("Error processing text:", err);
+          setError("Failed to process resume text. Please try again.");
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      reader.onerror = () => {
+        setError("Failed to read file. Please try again.");
+        setLoading(false);
+      };
+
+      reader.readAsArrayBuffer(file);
     } catch (err) {
       console.error("Error processing file:", err);
       setError("Failed to process resume. Please try again.");
-    } finally {
       setLoading(false);
     }
   };

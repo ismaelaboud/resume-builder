@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Check, X, AlertTriangle } from "lucide-react";
+import { Check, AlertTriangle } from "lucide-react";
 
 interface ATSScoreDialogProps {
   open: boolean;
@@ -52,38 +52,25 @@ const ATSScoreDialog = ({
 }: ATSScoreDialogProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] z-50">
-        <DialogHeader>
-          <DialogTitle>ATS Score Analysis</DialogTitle>
-          <DialogDescription>
+      <DialogContent className="sm:max-w-[600px] lg:max-w-[900px] h-[90vh] sm:h-auto overflow-hidden">
+        <DialogHeader className="space-y-2">
+          <DialogTitle className="text-xl sm:text-2xl">
+            ATS Score Analysis
+          </DialogTitle>
+          <DialogDescription className="text-sm sm:text-base text-muted-foreground">
             Detailed analysis of your resume's ATS compatibility
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6">
-          <div className="text-center">
-            <div
-              className={`inline-flex items-center justify-center w-20 h-20 rounded-full mb-2 ${
-                score >= 80
-                  ? "bg-green-100"
-                  : score >= 60
-                    ? "bg-yellow-100"
-                    : "bg-red-100"
-              }`}
-            >
-              <span
-                className={`text-2xl font-bold ${
-                  score >= 80
-                    ? "text-green-700"
-                    : score >= 60
-                      ? "text-yellow-700"
-                      : "text-red-700"
-                }`}
-              >
+        <div className="space-y-6 sm:space-y-8 lg:space-y-0 flex-1 overflow-hidden flex flex-col lg:flex-row lg:gap-8">
+          {/* Score Circle */}
+          <div className="text-center lg:w-1/3 lg:flex lg:flex-col lg:justify-center">
+            <div className="inline-flex items-center justify-center w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 rounded-full bg-green-50">
+              <span className="text-3xl sm:text-4xl lg:text-5xl font-bold text-green-600">
                 {score}%
               </span>
             </div>
-            <h3 className="text-lg font-semibold">
+            <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold mt-3 sm:mt-4 lg:mt-6">
               {score >= 80
                 ? "Excellent ATS Score"
                 : score >= 60
@@ -92,39 +79,40 @@ const ATSScoreDialog = ({
             </h3>
           </div>
 
-          <ScrollArea className="h-[400px] pr-4">
-            <div className="space-y-6">
+          {/* Analysis Sections */}
+          <ScrollArea className="flex-1 h-[300px] sm:h-[350px] lg:h-[500px] lg:w-2/3">
+            <div className="space-y-4 sm:space-y-6 pr-4 sm:pr-6">
               {analysis.map((category, index) => (
-                <div key={index} className="space-y-2">
+                <div key={index} className="space-y-2 sm:space-y-3">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-medium">{category.category}</h4>
+                    <h4 className="text-sm sm:text-base font-semibold">
+                      {category.category}
+                    </h4>
                     <span
-                      className={`text-sm ${
-                        category.score >= 80
-                          ? "text-green-600"
-                          : category.score >= 60
-                            ? "text-yellow-600"
-                            : "text-red-600"
-                      }`}
+                      className={`text-xs sm:text-sm font-medium ${getScoreColor(
+                        category.score,
+                      )}`}
                     >
                       {category.score}%
                     </span>
                   </div>
-                  <Progress value={category.score} />
-                  <ul className="space-y-2">
+                  <Progress
+                    value={category.score}
+                    className="h-1.5 sm:h-2"
+                    indicatorClassName={`${getProgressColor(category.score)}`}
+                  />
+                  <ul className="space-y-1.5 sm:space-y-2">
                     {category.suggestions.map((suggestion, i) => (
                       <li
                         key={i}
-                        className="flex items-start gap-2 text-sm text-muted-foreground"
+                        className="flex items-start gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground"
                       >
                         {category.score >= 80 ? (
-                          <Check className="w-4 h-4 text-green-500 mt-0.5" />
-                        ) : category.score >= 60 ? (
-                          <AlertTriangle className="w-4 h-4 text-yellow-500 mt-0.5" />
+                          <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-500 mt-0.5 shrink-0" />
                         ) : (
-                          <X className="w-4 h-4 text-red-500 mt-0.5" />
+                          <AlertTriangle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500 mt-0.5 shrink-0" />
                         )}
-                        {suggestion}
+                        <span>{suggestion}</span>
                       </li>
                     ))}
                   </ul>
@@ -136,6 +124,18 @@ const ATSScoreDialog = ({
       </DialogContent>
     </Dialog>
   );
+};
+
+const getScoreColor = (score: number): string => {
+  if (score >= 80) return "text-green-600";
+  if (score >= 60) return "text-amber-600";
+  return "text-red-600";
+};
+
+const getProgressColor = (score: number): string => {
+  if (score >= 80) return "bg-[#0f172a]";
+  if (score >= 60) return "bg-[#0f172a]";
+  return "bg-[#0f172a]";
 };
 
 export default ATSScoreDialog;

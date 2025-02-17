@@ -39,14 +39,18 @@ export async function saveResume(
   const user = await getCurrentUser();
   if (!user) throw new Error("Not authenticated");
 
-  const { data, error } = await supabase.from("resumes").insert([
-    {
+  const { data, error } = await supabase
+    .from("resumes")
+    .insert({
       user_id: user.id,
-      content,
+      content: content.replace(
+        /[\u0000-\u0008\u000B-\u000C\u000E-\u001F]/g,
+        "",
+      ), // Remove control characters
       ats_score: atsScore,
-      analysis,
-    },
-  ]);
+      analysis: JSON.stringify(analysis),
+    })
+    .select();
 
   if (error) throw error;
   return data;
